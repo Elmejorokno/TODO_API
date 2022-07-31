@@ -25,6 +25,9 @@ app.use(express.json());
 app.use("/api/v1/list", checkJWT, require("./routes/list.route"));
 app.use("/api/v1/task", checkJWT, require("./routes/task.route"));
 app.use("/", require("./routes/user.route"));
+app.use("*", (req, res) => {
+  return res.status(404).json({ error: "Page not found" });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
