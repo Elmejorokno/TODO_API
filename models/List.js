@@ -10,7 +10,11 @@ const listSchema = new Schema(
       maxLength: 30,
       required: [true, `Must provide a list name.`],
     },
-    //TODO: add property createdBy
+    createdBy: {
+      type: mongoose.Types.ObjectId,
+      ref: "users",
+      required: [true, "Must provide an user id."],
+    },
   },
   { timestamps: true }
 );

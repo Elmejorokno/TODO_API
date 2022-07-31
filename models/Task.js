@@ -19,6 +19,11 @@ const taskSchema = new Schema(
       ref: "lists",
       required: [true, "Must provide a list id."],
     },
+    createdBy: {
+      type: mongoose.Types.ObjectId,
+      ref: "users",
+      required: [true, "Must provide an user id."],
+    },
   },
   { timestamps: true }
 );

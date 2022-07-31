@@ -4,11 +4,16 @@ const {
   deleteList,
   updateList,
 } = require("../controllers/list.controller");
+const {
+  createListValidator,
+  updateListValidator,
+  deleteListValidator,
+} = require("../validators/list.validator");
 
 const router = express.Router();
 
-router.post("/", createList);
-router.patch("/:listId", updateList);
-router.delete("/:listId", deleteList);
+router.post("/", createListValidator, createList);
+router.patch("/:listId", updateListValidator, updateList);
+router.delete("/:listId", deleteListValidator, deleteList);
 
 module.exports = router;

@@ -1,11 +1,12 @@
+const { matchedData } = require("express-validator");
 const List = require("../models/List");
 const Task = require("../models/Task");
 
 const createList = async (req, res) => {
-  const { listName } = req.body;
+  const { list: listObj } = matchedData(req);
 
   try {
-    const list = await List.create({ listName });
+    const list = await List.create({ ...listObj, createdBy: req.userId });
 
     return res.status(201).json(list);
   } catch (error) {
@@ -14,14 +15,17 @@ const createList = async (req, res) => {
 };
 
 const updateList = async (req, res) => {
-  const { listId } = req.params;
-  const { list: listObj } = req.body;
+  const { list: listObj, listId } = matchedData(req);
 
   try {
-    const list = await List.findOneAndUpdate({ _id: listId }, listObj, {
-      new: true,
-      runValidators: true,
-    });
+    const list = await List.findOneAndUpdate(
+      { _id: listId, createdBy: req.userId },
+      listObj,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     if (!list) {
       const error = new Error(`The list isn't exists.`);
@@ -37,10 +41,13 @@ const updateList = async (req, res) => {
 };
 
 const deleteList = async (req, res) => {
-  const { listId } = req.params;
+  const { listId } = matchedData(req);
 
   try {
-    const list = await List.findOneAndDelete({ _id: listId });
+    const list = await List.findOneAndDelete({
+      _id: listId,
+      createdBy: req.userId,
+    });
 
     await Task.deleteMany({ listId });
 
