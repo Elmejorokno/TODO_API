@@ -43,6 +43,12 @@ const login = async (req, res) => {
   }
 };
 
+const logout = (req, res) => {
+  res.clearCookie("refreshJWT");
+
+  res.end();
+};
+
 /**
  * Create a JWT for send it in the headers.
  * @param {*} req
@@ -59,5 +65,6 @@ const refreshToken = (req, res) => {
 module.exports = {
   register,
   login,
+  logout,
   refreshToken,
 };

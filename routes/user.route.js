@@ -3,6 +3,7 @@ const {
   register,
   login,
   refreshToken,
+  logout,
 } = require("../controllers/user.controller");
 const {
   registerUserValidator,
@@ -14,6 +15,7 @@ const router = express.Router();
 
 router.post("/register", registerUserValidator, register);
 router.post("/login", loginUserValidator, login);
+router.get("/logout", loginUserValidator, logout);
 router.get("/refresh", checkRefreshJWT, refreshToken);
 
 module.exports = router;
