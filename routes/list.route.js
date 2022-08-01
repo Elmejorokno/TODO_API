@@ -1,5 +1,6 @@
 const express = require("express");
 const {
+  getAllLists,
   createList,
   deleteList,
   updateList,
@@ -12,6 +13,7 @@ const {
 
 const router = express.Router();
 
+router.get("/", getAllLists);
 router.post("/", createListValidator, createList);
 router.patch("/:listId", updateListValidator, updateList);
 router.delete("/:listId", deleteListValidator, deleteList);

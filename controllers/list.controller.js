@@ -2,6 +2,16 @@ const { matchedData } = require("express-validator");
 const List = require("../models/List");
 const Task = require("../models/Task");
 
+const getAllLists = async (req, res) => {
+  try {
+    const lists = await List.find({ createdBy: req.userId });
+
+    return res.status(200).json({ lists });
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
+};
+
 const createList = async (req, res) => {
   const { list: listObj } = matchedData(req);
 
@@ -65,6 +75,7 @@ const deleteList = async (req, res) => {
 };
 
 module.exports = {
+  getAllLists,
   createList,
   updateList,
   deleteList,

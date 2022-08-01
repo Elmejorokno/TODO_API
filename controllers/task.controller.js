@@ -1,6 +1,20 @@
 const { matchedData } = require("express-validator");
+const ObjectId = require("mongoose").Types.ObjectId;
 const List = require("../models/List");
 const Task = require("../models/Task");
+
+const getAllTasks = async (req, res) => {
+  try {
+    const tasks = await Task.aggregate([
+      { $match: { createdBy: ObjectId(req.userId) } },
+      { $group: { _id: "$listId", tasksByList: { $push: "$$ROOT" } } },
+    ]);
+
+    return res.status(200).json({ tasks });
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
+};
 
 const createTask = async (req, res) => {
   const { task: taskObj } = matchedData(req);
@@ -75,6 +89,7 @@ const deleteTask = async (req, res) => {
 };
 
 module.exports = {
+  getAllTasks,
   createTask,
   updateTask,
   deleteTask,

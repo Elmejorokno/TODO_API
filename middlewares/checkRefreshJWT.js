@@ -13,8 +13,6 @@ const jwt = require("jsonwebtoken");
 const checkRefreshJWT = (req, res, next) => {
   const cookieRefreshJWT = req.cookies.refreshJWT;
 
-  console.log(req.cookies);
-
   try {
     if (!cookieRefreshJWT) {
       const error = new Error(`Refresh JWT isn't exists.`);
