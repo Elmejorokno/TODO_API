@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const BaseError = require("../errors/BaseError");
 
 /**
  * Middleware that check if the validator from express-validator don't have any error.
@@ -15,7 +16,11 @@ const checkValidator = (req, res, next) => {
 
     return next();
   } catch (error) {
-    return res.status(400).json({ error: error.array() });
+    const errors = error
+      .array()
+      .map((error) => new BaseError("DATA_INVALID", 400, error.msg));
+
+    return res.status(400).json({ error: errors });
   }
 };
 

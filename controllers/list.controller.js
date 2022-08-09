@@ -1,14 +1,18 @@
 const { matchedData } = require("express-validator");
+const BaseError = require("../errors/BaseError");
 const List = require("../models/List");
 const Task = require("../models/Task");
 
 const getAllLists = async (req, res) => {
   try {
-    const lists = await List.find({ createdBy: req.userId });
+    const lists = await List.find({
+      createdBy: req.userId,
+    });
 
     return res.status(200).json({ lists });
   } catch (error) {
-    return res.status(400).json({ error });
+    const baseError = new BaseError("ERR_GET_LISTS", 400, error.message);
+    return res.status(400).json({ error: baseError });
   }
 };
 
@@ -18,9 +22,10 @@ const createList = async (req, res) => {
   try {
     const list = await List.create({ ...listObj, createdBy: req.userId });
 
-    return res.status(201).json(list);
+    return res.status(201).json({ list });
   } catch (error) {
-    return res.status(400).json({ error });
+    const baseError = new BaseError("ERR_CREATE_LIST", 400, error.message);
+    return res.status(400).json({ error: baseError });
   }
 };
 
@@ -38,15 +43,18 @@ const updateList = async (req, res) => {
     );
 
     if (!list) {
-      const error = new Error(`The list isn't exists.`);
-      error.status = 404;
-      throw error;
+      const baseError = new BaseError(
+        "ERR_NOT_FOUND_LIST",
+        404,
+        `The list isn't exists.`
+      );
+      return res.status(404).json({ error: baseError });
     }
 
     return res.status(200).json({ list });
   } catch (error) {
-    console.log(error.message);
-    return res.status(error.status || 400).json({ error });
+    const baseError = new BaseError("ERR_PATCH_LIST", 400, error.message);
+    return res.status(400).json({ error: baseError });
   }
 };
 
@@ -62,15 +70,18 @@ const deleteList = async (req, res) => {
     await Task.deleteMany({ listId });
 
     if (!list) {
-      const error = new Error(`THe list isn't exists.`);
-      error.status = 404;
-      throw error;
+      const baseError = new BaseError(
+        "ERR_NOT_FOUND_LIST",
+        404,
+        `The list isn't exists.`
+      );
+      return res.status(404).json({ error: baseError });
     }
 
     return res.status(200).json({ list });
   } catch (error) {
-    console.log(error.message);
-    return res.status(error.status || 400).json({ error });
+    const baseError = new BaseError("ERR_DELETE_LIST", 400, error.message);
+    return res.status(400).json({ error: baseError });
   }
 };
 

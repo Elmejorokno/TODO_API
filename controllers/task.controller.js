@@ -1,4 +1,5 @@
 const { matchedData } = require("express-validator");
+const BaseError = require("../errors/BaseError");
 const ObjectId = require("mongoose").Types.ObjectId;
 const List = require("../models/List");
 const Task = require("../models/Task");
@@ -12,7 +13,8 @@ const getAllTasks = async (req, res) => {
 
     return res.status(200).json({ tasks });
   } catch (error) {
-    return res.status(400).json({ error });
+    const baseError = new BaseError("ERR_GET_TASKS", 400, error.message);
+    return res.status(400).json({ error: baseError });
   }
 };
 
@@ -27,17 +29,20 @@ const createTask = async (req, res) => {
     }).lean();
 
     if (!list) {
-      const error = new Error(`The list isn't yours.`);
-      error.status = 401;
-      throw error;
+      const baseError = new BaseError(
+        "ERR_CREATE_TASK",
+        401,
+        `The list isn't yours.`
+      );
+      return res.status(401).json({ error: baseError });
     }
 
     const task = await Task.create({ ...taskObj, createdBy: req.userId });
 
     return res.status(201).json({ task });
   } catch (error) {
-    console.log(error.message);
-    return res.status(error.status || 400).json({ error, msg: error.message });
+    const baseError = new BaseError("ERR_CREATE_TASK", 400, error.message);
+    return res.status(400).json({ error: baseError });
   }
 };
 
@@ -54,15 +59,18 @@ const updateTask = async (req, res) => {
     );
 
     if (!task) {
-      const error = new Error(`The task isn't exists.`);
-      error.status = 404;
-      throw error;
+      const baseError = new BaseError(
+        "ERR_NOT_FOUND_TASK",
+        404,
+        `The task isn't exists.`
+      );
+      return res.status(404).json({ error: baseError });
     }
 
     return res.status(200).json({ task });
   } catch (error) {
-    console.log(error.message);
-    return res.status(error.status || 400).json({ error, msg: error.message });
+    const baseError = new BaseError("ERR_PATCH_TASK", 400, error.message);
+    return res.status(400).json({ error: baseError });
   }
 };
 
@@ -76,15 +84,18 @@ const deleteTask = async (req, res) => {
     });
 
     if (!task) {
-      const error = new Error(`The task isn't exists.`);
-      error.status = 404;
-      throw error;
+      const baseError = new BaseError(
+        "ERR_NOT_FOUND_TASK",
+        404,
+        `The task isn't exists.`
+      );
+      return res.status(404).json({ error: baseError });
     }
 
     return res.status(200).json({ task });
   } catch (error) {
-    console.log(error.message);
-    return res.status(error.status || 400).json({ error });
+    const baseError = new BaseError("ERR_DELETE_TASK", 400, error.message);
+    return res.status(400).json({ error: baseError });
   }
 };
 

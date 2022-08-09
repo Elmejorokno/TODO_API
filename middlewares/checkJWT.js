@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const BaseError = require("../errors/BaseError");
 
 /**
  * Middleware that checks the JWT sent in the authorization
@@ -16,9 +17,12 @@ const checkJWT = (req, res, next) => {
 
   try {
     if (!authorization || !authorization.startsWith("Bearer ")) {
-      const error = new Error(`The authorization header is invalid.`);
-      error.status = 401;
-      throw error;
+      const baseError = new BaseError(
+        "INVALID_HEADER_JWT",
+        401,
+        `The authorization header is invalid.`
+      );
+      return res.status(401).json({ error: baseError });
     }
 
     const token = authorization.split(" ")[1];
@@ -29,7 +33,8 @@ const checkJWT = (req, res, next) => {
 
     next();
   } catch (error) {
-    return res.status(error.status || 400).json({ error, msg: error.message });
+    const baseError = new BaseError("INVALID_JWT", 400, error.message);
+    return res.status(400).json({ error: baseError });
   }
 };
 

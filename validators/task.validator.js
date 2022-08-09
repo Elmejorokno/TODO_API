@@ -4,8 +4,8 @@ const checkValidator = require("../middlewares/checkValidator");
 const createTaskValidator = [
   body("task.taskName", "Invalid task name.")
     .trim()
-    .isLength({ min: 2, max: 30 })
-    .withMessage("The company name must be between 2 or 30 characters long.")
+    .isLength({ min: 2, max: 50 })
+    .withMessage("The task name must be between 2 or 50 characters long.")
     .escape(),
   body("task.listId", "Invalid list id.").trim().isMongoId().escape(),
 
@@ -15,8 +15,8 @@ const createTaskValidator = [
 const updateTaskValidator = [
   body("task.taskName", "Invalid task name.")
     .trim()
-    .isLength({ min: 2, max: 30 })
-    .withMessage("The company name must be between 2 or 30 characters long.")
+    .isLength({ min: 2, max: 50 })
+    .withMessage("The task name must be between 2 or 50 characters long.")
     .escape()
     .optional({ nullable: true }),
   body("task.completed", "Invalid completed value.")

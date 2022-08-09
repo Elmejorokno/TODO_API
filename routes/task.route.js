@@ -6,6 +6,7 @@ const {
   deleteTask,
 } = require("../controllers/task.controller");
 const {
+  getAllTasksValidator,
   createTaskValidator,
   updateTaskValidator,
   deleteTaskValidator,

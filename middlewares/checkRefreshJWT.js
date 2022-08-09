@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const BaseError = require("../errors/BaseError");
 
 /**
  * Middleware that checks the refresh JWT saved in the `cookie.refreshToken`
@@ -15,9 +16,12 @@ const checkRefreshJWT = (req, res, next) => {
 
   try {
     if (!cookieRefreshJWT) {
-      const error = new Error(`Refresh JWT isn't exists.`);
-      error.status = 401;
-      throw error;
+      const baseError = new BaseError(
+        "MISSING_COOKIE_REFRESH_JWT",
+        401,
+        `Refresh JWT isn't exists.`
+      );
+      return res.status(401).json({ error: baseError });
     }
 
     const { userId } = jwt.verify(
@@ -29,7 +33,8 @@ const checkRefreshJWT = (req, res, next) => {
 
     next();
   } catch (error) {
-    return res.status(error.status || 400).json({ error, msg: error.message });
+    const baseError = new BaseError("INVALID_REFRESH_JWT", 400, error.message);
+    return res.status(400).json({ error: baseError });
   }
 };
 
